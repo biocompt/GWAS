@@ -1,6 +1,6 @@
 library(ramwas)
 
-setwd('/hdd/Estudios_finalizados/gwas/')
+setwd('path/to/files')
 ruta <- getwd()
 gwas <- list.files(ruta, pattern = "*.txt")
 
@@ -29,7 +29,7 @@ for (i in 1:length(gwas)){
   color <- "#BB0000"
   xmax <- as.numeric(10)
   output <- paste("plots/QQplot_", sub(".txt", ".png", gwas[i]), sep ="")
-  source("/home/carlos/scripts/qqplot_function.R")
+  source("path/qqplot_function")
   rm(z)
   dev.off()
 }
