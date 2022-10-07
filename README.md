@@ -23,7 +23,26 @@ To increase the power of detection of significative signals, it is desirable to 
 2. **TRACKPOSITIONS** -  METAL checks if chromosome and position of a variant match across studies.
 3. **GENOMICCONTROL** - To correct test statistics to account for small amounts of population stratification or unaccounted for relatedness
 ```
+# SET PARAMETERS TO ANALYZE
 SCHEME SAMPLESIZE/STDERR
 TRACKPOSITIONS  ON
-**GENOMICCONTROL** ON
+GENOMICCONTROL ON
+
+#SET THE NAMES OF HEADERS THAT WE HAVE IN OUR FILES
+MARKER -
+POS -
+WEIGHT -
+ALLELE - -
+FREQ -
+EFFECT -
+STDERR -
+PVALUE -
+
+# LOAD THE FILES
+PROCESS $FILES
+
+# CARRY OUT THE ANALYSIS
+OUTFILE $OUTPUT .tbl
+ANALYZE
+ANALYZE HETEROGENEITY
 ```
