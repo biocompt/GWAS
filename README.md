@@ -46,4 +46,4 @@ OUTFILE $OUTPUT .tbl
 ANALYZE
 ANALYZE HETEROGENEITY
 ```
-[Manhattan Plot](https://upload.wikimedia.org/wikipedia/commons/4/4f/Manhattan_plot_from_a_GWAS_of_kidney_stone_disease.png)
+![Manhattan Plot](https://upload.wikimedia.org/wikipedia/commons/4/4f/Manhattan_plot_from_a_GWAS_of_kidney_stone_disease.png)
