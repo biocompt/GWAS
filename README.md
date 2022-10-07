@@ -19,3 +19,11 @@ plink2 --bfile $OUTPUT_FILTERED --pheno $PHENO --keep $IDS --covar $COVS \
 ```
 ## Meta-analysis
 To increase the power of detection of significative signals, it is desirable to analyze multiple cohorts at once by running a Meta-GWAS. There are several tools to do it, in my case, I chose METAL.
+1. **Scheme** - To specify the type of analysis. *SampleSize* is the default option, using the effect, p-value and N of the study. It is recommendable when the analysis of the cohorts has been done with different tools. *STDERR* is the classical approach, using the effect estimations and the standard error. 
+```
+SCHEME SAMPLESIZE/STDERR
+TRACKPOSITIONS  ON
+CHROMOSOMELABEL CHR
+POSITIONLABEL   POS
+GENOMICCONTROL ON
+```
