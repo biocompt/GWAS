@@ -15,5 +15,5 @@ plink2 --bfile $GENODATA --maf 0.05 --geno 0.02 --mind 0.02 --hwe 1e-6 \
 We set the desired parameters to our study. As an option, we can give a pheno file with multiple phenos, one for colum. Usually, we are just interest in obtain the "ADD" values in the output, so we can run fast the analysis and obtaining a smaller output by setting the option hide-covar.
 ```
 plink2 --bfile $OUTPUT_FILTERED --pheno $PHENO --keep $IDS --covar $COVS \
-  --glm hide-covar cols=chrom,pos,ref,alt1,ax,a1freq,beta,orbeta,se,p --out $OUTPUT
+  --glm hide-covar cols=chrom,pos,ref,alt,ax,a1freq,nobs,beta,se,p --out $OUTPUT
 ```
