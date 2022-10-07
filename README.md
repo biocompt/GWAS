@@ -25,5 +25,5 @@ To increase the power of detection of significative signals, it is desirable to 
 ```
 SCHEME SAMPLESIZE/STDERR
 TRACKPOSITIONS  ON
-GENOMICCONTROL ON
+**GENOMICCONTROL** ON
 ```
