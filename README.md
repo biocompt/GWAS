@@ -1,4 +1,4 @@
-# GWAS
+# GWAS and METAGWAS
 Scripts to run Genome-Wide Association Studies and COX-GWAS.
 
 ## Filtering the genotype
@@ -17,3 +17,5 @@ We set the desired parameters to our study. As an option, we can give a pheno fi
 plink2 --bfile $OUTPUT_FILTERED --pheno $PHENO --keep $IDS --covar $COVS \
   --glm hide-covar cols=chrom,pos,ref,alt,ax,a1freq,nobs,beta,se,p --out $OUTPUT
 ```
+## Meta-analysis
+If we are analyzing different cohorts, we can make a gen
