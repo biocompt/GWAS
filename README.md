@@ -18,4 +18,4 @@ plink2 --bfile $OUTPUT_FILTERED --pheno $PHENO --keep $IDS --covar $COVS \
   --glm hide-covar cols=chrom,pos,ref,alt,ax,a1freq,nobs,beta,se,p --out $OUTPUT
 ```
 ## Meta-analysis
-If we are analyzing different cohorts, we can make a gen
+To increase the power of detection of significative signals, it is desirable to analyze multiple cohorts at once by running a Meta-GWAS. There are several tools to do it, in my case, I chose METAL.
