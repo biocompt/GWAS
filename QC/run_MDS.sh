@@ -1,17 +1,19 @@
 ##############################################
 ###########    GENOTYPING DATA    ############
 ########### pre-imputation MDS QC ############
-###########                	  ############
 ##############################################
 
-KG="1kG/1kG"
-GENO="geno/REQUITE_TOPMed_2022_GENO_0.02_MIND_0.02_MAF_0.05_HWE_HET_FOUNDERS"
-PCA="pca"
+KG=1kG
+GENO=GENOFILE
+PCA=pca
 
 module load cesga/2020 gcc/system plink/2.00a2.3
+# SNP ids are in different format in 1kG and our BIM file, so change the 1kg to our format
+plink --bfile $KG --update-name new_ids.txt --make-bed --out ${KG}_updated_IDS
+
 ## QC on 1000 Genomes data.
 # Remove variants based on missing genotype data.
-plink2 --bfile $KG --geno 0.2 --allow-no-sex --make-bed --out ${KG}_MDS
+plink2 --bfile ${KG}_updated_IDS --geno 0.2 --allow-no-sex --make-bed --out ${KG}_MDS
 
 # Remove individuals based on missing genotype data.
 plink2 --bfile ${KG}_MDS --mind 0.2 --allow-no-sex --make-bed --out ${KG}_MDS2
@@ -26,21 +28,17 @@ plink2 --bfile ${KG}_MDS3 --mind 0.02 --allow-no-sex --make-bed --out ${KG}_MDS4
 plink2 --bfile ${KG}_MDS4 --maf 0.05 --allow-no-sex --make-bed --out ${KG}_MDS5
 
 module load plink/1.9b5
-#>>>>>>>>>>>>>>>>>>>>>>>>> DESDE AQUI SE PUEDE INICIAR CON EL 1kG_MDS5
-#Como los ids de los snps estan en formato distinto en los 2 archivos
-#cambiamos el de los 1kG al formato de nuestra cohorte
-plink --bfile 1kG/1kG --update-name new_ids.txt --make-bed --out 1kG_updated
 
 module load cesga/2020 gcc/system plink/2.00a2.3
 # Extract the variants present in HapMap dataset from the 1000 genomes dataset.
-awk '{print$2}' geno/4_COHORTES.bim > HapMap_SNPs.txt
+awk '{print$2}' geno/GENOFILE.bim > HapMap_SNPs.txt
 plink2 --bfile 1kG_MDS5 --extract HapMap_SNPs.txt --make-bed --out 1kG_MDS6
 
 module load plink/1.9b5
 # Extract the variants present in 1000 Genomes dataset from the HapMap dataset.
 awk '{print$2}' 1kG_MDS6.bim > 1kG_MDS6_SNPs.txt
 #----> ELIMINO ambos SNPs DUPLICADOS para evitar errores | 4:52938243, 9:135770300, 9:135770347, 9:136135237
-plink --bfile geno/4_COHORTES --extract 1kG_MDS6_SNPs.txt --recode --make-bed --out HapMap_MDS
+plink --bfile $GENO --extract 1kG_MDS6_SNPs.txt --recode --make-bed --out HapMap_MDS
 # The datasets now contain the exact same variants.
 
 module load cesga/2020 gcc/system plink/2.00a2.3
@@ -131,50 +129,17 @@ awk '{ if ($4 < -0.03 && $5 > 0.02) print $1,$2 }' MDS_merge2.mds > EUR_MDS_merg
 
 module load cesga/2020 gcc/system plink/2.00a2.3
 # Extract these individuals in HapMap data.
-plink2 --bfile IBIS_v2_geno0.01_mind0.025_sexcheck_autosomes_maf0.05_hwe106_hh3sd_founders_pihat0.2 --make-bed --keep EUR_MDS_merge2 --out IBIS_v2_2021
-#Start time: Wed Sep  1 22:30:04 2021
-#32557 MiB RAM detected; reserving 16278 MiB for main workspace.
-#Using up to 12 threads (change this with --threads).
-#185 samples (29 females, 156 males; 185 founders) loaded from
-#IBIS_v2_geno0.01_mind0.025_sexcheck_autosomes_maf0.05_hwe106_hh3sd_founders_pihat0.2.fam.
-#351779 variants loaded from
-#IBIS_v2_geno0.01_mind0.025_sexcheck_autosomes_maf0.05_hwe106_hh3sd_founders_pihat0.2.bim.
-#Note: No phenotype data present.
-#--keep: 182 samples remaining.
-#182 samples (28 females, 154 males; 182 founders) remaining after main filters.
+plink2 --bfile $GENO --make-bed --keep EUR_MDS_merge2 --out ${GENO}_EUR_MDS
 
-plink1.9 --bfile IBIS_v2_2021 --extract indepSNP.prune.in --genome --out IBIS_v2_2021
-#351779 variants loaded from .bim file.
-#182 people (154 males, 28 females) loaded from .fam.
-#--extract: 123566 variants remaining.
-#Using up to 11 threads (change this with --threads).
-#Before main variant filters, 182 founders and 0 nonfounders present.
-#Calculating allele frequencies... done.
-#Total genotyping rate is 0.999035.
-#123566 variants and 182 people pass filters and QC.
-#Note: No phenotypes present.
-#IBD calculations complete.
-#Finished writing IBIS_v2_2021.genome .
+module load cesga/2020 gcc/system plink/1.9b5
+plink --bfile ${GENO}_EUR_MDS --extract indepSNP.prune.in --genome --out ${GENO}_EUR_MDS
 
-plink1.9 --bfile IBIS_v2_2021 --read-genome IBIS_v2_2021.genome --cluster --mds-plot 10 --out IBIS_v2_2021_mds
-#351779 variants loaded from .bim file.
-#182 people (154 males, 28 females) loaded from .fam.
-#Using 1 thread (no multithreaded calculations invoked).
-#Before main variant filters, 182 founders and 0 nonfounders present.
-#Calculating allele frequencies... done.
-#Total genotyping rate is 0.999073.
-#351779 variants and 182 people pass filters and QC.
-#Note: No phenotypes present.
-#Clustering... done.
-#Cluster solution written to IBIS_v2_2021_mds.cluster1 ,
-#IBIS_v2_2021_mds.cluster2 , and IBIS_v2_2021_mds.cluster3 .
-#Performing multidimensional scaling analysis (SVD algorithm, 10 dimensions)... done.
-#MDS solution written to IBIS_v2_2021_mds.mds .
+plink --bfile ${GENO}_EUR_MDS --read-genome ${GENO}_EUR_MDS.genome --cluster --mds-plot 10 --out ${GENO}_EUR_MDS_DISTANCE
 
 # Change the format of the .mds file into a plink covariate file.
-awk '{print$1, $2, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' IBIS_v2_2021_mds.mds > covar_mds.txt
+awk '{print$1, $2, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13}' ${GENO}_EUR_MDS_DISTANCE.mds > covar_mds.txt
 # The values in covar_mds.txt will be used as covariates, to adjust for remaining population stratification, in the third tutorial where we will perform a genome-wide association analysis.
 
 ##########################################################################################################################################################################
 
-## CONGRATULATIONS you have succesfully controlled your data for population stratification!
+echo "CONGRATULATIONS you have succesfully controlled your data for population stratification!"
