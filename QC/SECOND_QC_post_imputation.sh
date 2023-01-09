@@ -34,6 +34,7 @@ mv $file $(basename $file .dose.vcf.gz)_[DESCRIPTION_OF_THE_FILE].dose.vcf.gz
 done
 
 ## 3) Indexing tab-delimited genome position
+## As indexing files is a long process, let's create a script for each chromosome and run them all at once.
 ls $UNFILTERED > $SCRIPTS/unzipped_chr.txt
 mkdir $SCRIPTS/TABIX
 for line in $SCRIPTS/unzipped_chr.txt
@@ -47,7 +48,10 @@ do
 sbatch $file
 done
 
+echo "You have indexed your CHR"
+
 ## 4) Filter by INFO imputation score
+## As filtering files is a long process, let's create a script for each chromosome and run them all at once.
 mkdir $SCRIPTS/FILTERED 
 for line in $SCRIPTS/unzipped_chr.txt
 do
@@ -60,8 +64,12 @@ do
 sbatch $file
 done
 
+echo " You have filtered by INFO > 0.3"
+
 ## 5) Indexing filtered chromosomes
 ## Repeat step 3
 
 ## 6) Concatenated all chromosomes in one file
 bcftools concat chr*.vcf.gz -o $CONCATENATED/OUTPUT
+
+echo "You have concatenated all your chromosomes"
