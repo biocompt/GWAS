@@ -153,7 +153,7 @@ echo -e "Remaining SNPs: ${NSNP}\n" >> ${SUMMARY}
 cp ${TEMP}/${BASE}_fail_dupl_snps.txt ${RESULT}
 
 ################################################################################
-## 				mac=0 / monomorphic			      ##
+## 				                     monomorphic                                    ##
 ################################################################################
 
 plink2 --bfile ${TEMP}/${BASE}_no_dupl_snps --freq --out ${TEMP}/${BASE}_mac
@@ -173,7 +173,7 @@ echo -e "Remaining SNPs: ${NSNP}\n" >> ${SUMMARY}
 cp ${TEMP}/${BASE}_fail_mac.txt ${RESULT}
 
 ################################################################################
-# 				Minor allele freq			      ##
+## 				Minor allele freq			                                              ##
 ################################################################################
 plink2 --bfile ${TEMP}/${BASE}_mac_checked --freq --out ${TEMP}/${BASE}_frq
 Rscript ${HELP}/maf_fail.R ${MAF_TH} ${TEMP}/${BASE}_frq.afreq ${TEMP}/${BASE}_fail_maf.txt
@@ -188,7 +188,7 @@ echo -e "Num of SNPs failing: ${NSNP}\n" >> ${SUMMARY}
 cp ${TEMP}/${BASE}_fail_maf.txt ${RESULT}
 
 ################################################################################
-## 				SNP missingness				      ##
+## 				SNP missingness				                                              ##
 ################################################################################
 plink2 --bfile ${TEMP}/${BASE}_mac_checked --missing --out ${TEMP}/${BASE}_snp_miss
 Rscript ${HELP}/lmiss_fail.R ${SNP_FMISS_TH} ${TEMP}/${BASE}_snp_miss.vmiss ${TEMP}/${BASE}_fail_lmiss.txt
@@ -218,7 +218,7 @@ echo -e "Num of SNPs failing: ${NSNP}\n" >> ${SUMMARY}
 cp ${TEMP}/${BASE}_fail_hwe.txt ${RESULT}
 
 ################################################################################
-## 				Exclusion of SNPs			      ##
+## 				Exclusion of SNPs			                                              ##
 ################################################################################
 cat ${TEMP}/${BASE}_fail_maf.txt ${TEMP}/${BASE}_fail_lmiss.txt ${TEMP}/${BASE}_fail_hwe.txt | sort -u > ${TEMP}/${BASE}_snp_exclusion.txt
 plink2 --bfile ${TEMP}/${BASE}_mac_checked --exclude ${TEMP}/${BASE}_snp_exclusion.txt --make-bed --out ${TEMP}/${BASE}_snps_checked
@@ -247,25 +247,16 @@ plink2 --bfile ${TEMP}/${BASE}_snps_checked --exclude ${TEMP}/autosomeexcludes.t
 plink2 --bfile ${TEMP}/${BASE}_autosomal --maf 0.1 --exclude range ${HIGH_LD_b37} --indep-pairwise 50 5 0.2 --out ${TEMP}/${BASE}_autosomal_indepSNP
 
 ################################################################################
-# HapMap PCA for heterozygosity check
+##                HapMap PCA for heterozygosity check                         ##
 ################################################################################
-# Update to b37 forward strand using Will's script and files
-# Copy strand b37 file
-cp ./help_files/${STRAND_FILE} ${TEMP}
-
-# Run Will's script
-${HELP}/update_build_new.sh ${TEMP}/${BASE}_snps_checked ${TEMP}/${STRAND_FILE} ${TEMP}/${BASE}_hetcheck_b37fwd
-
-
-# select only individuals from CEU, JPT, CHB, YRI
+# Select only individuals from CEU, JPT, CHB, YRI
 fam <- read.table('./help_files/HapMapIII_CGRCh37.fam')
 pop <- read.delim("../reference/relationships_w_pops_121708.txt")
 mm <- match(fam[,2],pop[,2])
 fam[,6] <- as.character(pop$population[mm])
 fam2 <- fam[fam[,6] %in% c('CEU')]
 
-
-# create plink file with reduced populations
+# Create PLINK file with reduced populations
 awk '{print $1, $2}' help_files/fam_CEU_JPT_CHB_YRI.fam > help_files/inds_CEU_JPT_CHB_YRI.txt
 
 plink2 --bfile ./help_files/HapMapIII_CGRCh37 --keep help_files/inds_CEU_JPT_CHB_YRI.txt --make-bed --out ./help_files/HapMapIII_CGRCh37_reduced
